@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  cpp-server:
+    build:
+      context: ./cpp_server
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    networks:
+      - app_network
+    tty: true # Keeps the server container running
+
+  python-client:
+    build:
+      context: ./client # Path client's Dockerfile directory
+      dockerfile: Dockerfile
+    environment:
+      SERVER_ADDRESS: cpp-server
+      SERVER_PORT: 5555
+    stdin_open: true # Enable interactive mode for user input
+    tty: true # For terminal
+    networks:
+      - app_network
+    depends_on:
+      - cpp-server
+
+networks:
+  app_network:
+    driver: bridge
